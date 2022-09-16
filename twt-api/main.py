@@ -14,15 +14,23 @@ videos = {1: {"name": "Tim", "views": 10000, "likes": 10}}
 
 # Define a resource
 class Video(Resource):
+    # CREATE
+    def post(self):
+        pass
+    # READ
     def get(self, video_id):
         print("GETTING VIDEO ID:", video_id)
         print(video_id)
         return videos[video_id]
+    # UPDATE
     def put(self, video_id):
         print("PUTTING VIDEO ID:", video_id)
         args = video_put_args.parse_args()
         print(request.form)
         print(request.form["likes"])
+    # DELETE
+    def delete(self, video_id):
+        pass
 
         # Add the video to the videos dictionary
         videos[video_id] = args
