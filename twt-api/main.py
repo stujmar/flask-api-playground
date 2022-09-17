@@ -30,7 +30,8 @@ class Video(Resource):
         print(request.form["likes"])
     # DELETE
     def delete(self, video_id):
-        pass
+        # remove video from videos
+        del videos[video_id]
 
         # Add the video to the videos dictionary
         videos[video_id] = args
