@@ -27,7 +27,7 @@ pip install -r requirements.txt
 4. Run the application
 
 ```bash
-python app.py
+python main.py
 ```
 
 # Second through nth time setup
