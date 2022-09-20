@@ -27,7 +27,7 @@ class Video(Resource):
     def get(self, video_id):
         abort_if_video_id_doesnt_exist(video_id)
         print("GETTING VIDEO ID:", video_id)
-        return videos[video_id]
+        return videos[video_id], 200
 
     # UPDATE
     def put(self, video_id):
@@ -39,7 +39,7 @@ class Video(Resource):
     def delete(self, video_id):
         # remove video from videos
         del videos[video_id]
-        return 204
+        return None, 204
 
 
 # Add the resource to the API as an endpoint.
