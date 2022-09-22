@@ -17,6 +17,10 @@ def abort_if_video_id_doesnt_exist(video_id):
     if video_id not in videos:
         abort(404, message="Could not find video...")
 
+def abort_if_exists(video_id):
+    if video_id in videos:
+        abort(409, message="Video already exists with that ID...")
+
 # Define a resource
 class Video(Resource):
 
@@ -36,18 +40,20 @@ class Video(Resource):
     # UPDATE
     def put(self, video_id):
         args = video_put_args.parse_args()
+        abort_if_exists(video_id)
         if video_id not in videos.keys():
             videos[video_id] = args
             return {video_id: args}, 201
-        else:
-            videos[video_id] = args
-            return {video_id: args}, 200
+        # else:
+        #     videos[video_id] = args
+        #     return {video_id: args}, 200
 
     # DELETE
     def delete(self, video_id):
         # remove video from videos
+        abort_if_video_id_doesnt_exist(video_id)
         del videos[video_id]
-        return None, 204
+        return None, 204 # could be empty string instead of None
 
 
 # Add the resource to the API as an endpoint.
