@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_restful import Api, Resource, reqparse, abort
 
 # Wrap our app in an API?
@@ -58,6 +58,11 @@ class Video(Resource):
 
 # Add the resource to the API as an endpoint.
 api.add_resource(Video, "/video/<int:video_id>")
+
+# Add a route to the API for templating.
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 # Check that this is the entry point.
 if __name__ == "__main__":

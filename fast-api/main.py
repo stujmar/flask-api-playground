@@ -8,5 +8,5 @@ def root():
 
 @app.post("/login")
 def login():
-    return {"user": "smarsh"}
+    return {"logged_user": "smarsh"}
 
