@@ -1,9 +1,25 @@
-from flask import Flask, request, render_template
+from os.path import exists
+from flask import Flask, render_template
 from flask_restful import Api, Resource, reqparse, abort
+from flask_sqlalchemy import SQLAlchemy
 
 # Wrap our app in an API?
 app = Flask(__name__)
 api = Api(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+db = SQLAlchemy(app)
+
+class VideoModel(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False) # has to have some info, nullable=True means it can be empty
+    views = db.Column(db.Integer, nullable=False)
+    likes = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f"Video(name = {self.name}, views = {self.views}, likes = {self.likes})"
+
+if not exists("database.db"):
+    db.create_all()
 
 video_put_args = reqparse.RequestParser()
 video_put_args.add_argument("name", type=str, help="Name of the video is required", required=True)
@@ -34,8 +50,14 @@ class Video(Resource):
 
     # READ
     def get(self, video_id):
-        abort_if_video_id_doesnt_exist(video_id)
-        return videos[video_id], 200
+        result = VideoModel.query.filter_by(id=video_id).first()
+        if result:
+            return result, 200
+        else:
+            return None, 404
+        # Old non db code
+        # abort_if_video_id_doesnt_exist(video_id)
+        # return videos[video_id], 200
 
     # UPDATE
     def put(self, video_id):
