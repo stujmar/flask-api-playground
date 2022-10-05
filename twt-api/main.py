@@ -31,11 +31,6 @@ video_update_args.add_argument("name", type=str, help="Name of the video is requ
 video_update_args.add_argument("views", type=int, help="Views of the video")
 video_update_args.add_argument("likes", type=int, help="Likes on the video")
 
-video_put_args = reqparse.RequestParser()
-video_put_args.add_argument("name", type=str, help="Name of the video is required", required=True)
-video_put_args.add_argument("views", type=int, help="Views of the video is required", required=True)
-video_put_args.add_argument("likes", type=int, help="Likes of the video is required", required=True)
-
 videos = {1: {"name": "Tim", "views": 10000, "likes": 10}}
 
 # Is this a custom exception?
@@ -60,8 +55,10 @@ class Video(Resource):
     # CREATE
     def post(self, video_id):
         args = video_put_args.parse_args()
-        if video_id in videos.keys():
-            return {video_id: args}, 409
+        # If the video exists ... Don't create a new one.
+        result = VideoModel.query.filter_by(id=video_id).first()
+        if result:
+            abort(409, message="Video id taken...")
         videos[video_id] = args
         return {video_id: args}, 201
 
@@ -82,6 +79,7 @@ class Video(Resource):
     @marshal_with(resource_fields)
     def put(self, video_id):
         arg = video_update_args.parse_args()
+
         video = VideoModel(id=video_id, name=arg["name"], views=arg["views"], likes=arg["likes"])
         db.session.add(video)
         db.session.commit()
